@@ -111,22 +111,36 @@ defineExpose({ focusInput })
 .terminal-input-line {
   display: flex;
   align-items: center;
-  padding: 4px 16px 16px;
+  padding: 4px var(--terminal-padding) var(--terminal-padding);
   cursor: text;
   flex-shrink: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .prompt {
   color: var(--terminal-prompt);
   font-family: var(--terminal-font);
-  font-size: var(--terminal-font-size);
+  font-size: var(--terminal-prompt-size, var(--terminal-font-size));
   line-height: 1.5;
   white-space: nowrap;
   user-select: none;
+  flex-shrink: 0;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 480px) {
+  .prompt {
+    max-width: 35%;
+  }
 }
 
 .input-wrapper {
   flex: 1;
+  min-width: 0;
   position: relative;
   overflow: hidden;
 }

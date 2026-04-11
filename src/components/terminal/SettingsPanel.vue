@@ -87,6 +87,10 @@ function selectFontSize(size: number) {
   top: 40px;
   right: 8px;
   width: 260px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 60px);
+  max-height: calc(100dvh - 60px);
+  overflow-y: auto;
   background: #1e1e1e;
   border: 1px solid #444;
   border-radius: 8px;
@@ -96,6 +100,15 @@ function selectFontSize(size: number) {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+@media (max-width: 480px) {
+  .settings-panel {
+    right: 4px;
+    left: 4px;
+    width: auto;
+    top: 36px;
+  }
 }
 
 .settings-section {

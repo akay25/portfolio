@@ -25,8 +25,8 @@ const emit = defineEmits<{
 <style scoped>
 .command-chips {
   display: none;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 8px var(--terminal-padding);
   flex-wrap: wrap;
   flex-shrink: 0;
 }

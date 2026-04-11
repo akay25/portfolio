@@ -100,23 +100,35 @@ function hasLinks(text: string): boolean {
 .terminal-output {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  overflow-x: hidden;
+  padding: var(--terminal-padding);
   font-family: var(--terminal-font);
   font-size: var(--terminal-font-size);
   line-height: 1.5;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .output-line {
   min-height: 1.5em;
   white-space: pre-wrap;
-  word-break: break-word;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
 }
 
 .output-line pre {
   margin: 0;
   font-family: inherit;
   font-size: inherit;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.terminal-link {
+  word-break: break-all;
 }
 
 .line-default { color: var(--terminal-fg); }

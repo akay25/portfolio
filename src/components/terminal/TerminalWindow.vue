@@ -69,9 +69,28 @@ function toggleSettings() {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
+  height: 100dvh;
+  width: 100%;
+  max-width: 100vw;
   background: var(--terminal-bg);
   overflow: hidden;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .title-bar-dots {
+    display: none;
+  }
+
+  .title-bar {
+    height: 32px;
+    padding: 0 8px;
+  }
+
+  .title-bar-text {
+    font-size: 11px;
+    text-align: left;
+  }
 }
 
 .title-bar {
