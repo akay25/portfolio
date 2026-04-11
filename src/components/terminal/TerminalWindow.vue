@@ -9,9 +9,10 @@ import SettingsPanel from './SettingsPanel.vue'
 const terminal = useTerminalStore()
 const mobileCommands = ['help', 'ls', 'whoami', 'clear']
 const showSettings = ref(false)
+const terminalInput = ref<InstanceType<typeof TerminalInput> | null>(null)
 
-function handleChipExecute(cmd: string) {
-  terminal.executeCommand(cmd)
+function handleChipFill(cmd: string) {
+  terminalInput.value?.setInput(cmd)
 }
 
 function handleWindowClick(event: Event) {
@@ -59,8 +60,8 @@ function toggleSettings() {
       <SettingsPanel v-if="showSettings" />
     </div>
     <TerminalOutput :lines="terminal.outputLines" />
-    <CommandChips :commands="mobileCommands" @execute="handleChipExecute" />
-    <TerminalInput />
+    <CommandChips :commands="mobileCommands" @fill="handleChipFill" />
+    <TerminalInput ref="terminalInput" />
   </div>
 </template>
 

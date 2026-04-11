@@ -77,7 +77,12 @@ onMounted(() => {
   focusInput()
 })
 
-defineExpose({ focusInput })
+function setInput(val: string) {
+  currentInput.value = val
+  focusInput()
+}
+
+defineExpose({ focusInput, setInput })
 </script>
 
 <template>

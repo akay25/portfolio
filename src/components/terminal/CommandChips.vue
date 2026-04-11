@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  execute: [command: string]
+  fill: [command: string]
 }>()
 </script>
 
@@ -14,8 +14,8 @@ const emit = defineEmits<{
       v-for="cmd in commands"
       :key="cmd"
       class="chip"
-      :aria-label="`Execute ${cmd}`"
-      @click="emit('execute', cmd)"
+      :aria-label="`Fill ${cmd} command`"
+      @click="emit('fill', cmd)"
     >
       {{ cmd }}
     </button>
