@@ -46,7 +46,7 @@ watch(
   overflow-y: auto;
   padding: 16px;
   font-family: var(--terminal-font);
-  font-size: 14px;
+  font-size: var(--terminal-font-size);
   line-height: 1.5;
 }
 

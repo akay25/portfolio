@@ -13,7 +13,7 @@ defineProps<{
 .ascii-art {
   color: var(--terminal-success);
   font-family: var(--terminal-font);
-  font-size: 14px;
+  font-size: var(--terminal-font-size);
   line-height: 1.2;
   margin: 0;
   overflow-x: auto;

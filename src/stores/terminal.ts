@@ -9,6 +9,8 @@ export const useTerminalStore = defineStore('terminal', () => {
   const commandHistory = ref<string[]>(loadHistory())
   const currentPath = ref('~')
   const themeName = ref(localStorage.getItem('theme') ?? 'matrix')
+  const fontFamily = ref(localStorage.getItem('fontFamily') ?? "'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'Cascadia Code', 'Consolas', 'Monaco', monospace")
+  const fontSize = ref(Number(localStorage.getItem('fontSize')) || 14)
   const isProcessing = ref(false)
 
   const prompt = computed(() => `visitor@ajay:${currentPath.value}$`)
@@ -55,6 +57,16 @@ export const useTerminalStore = defineStore('terminal', () => {
     localStorage.setItem('theme', name)
   }
 
+  function setFontFamily(family: string): void {
+    fontFamily.value = family
+    localStorage.setItem('fontFamily', family)
+  }
+
+  function setFontSize(size: number): void {
+    fontSize.value = size
+    localStorage.setItem('fontSize', String(size))
+  }
+
   function addToHistory(cmd: string): void {
     commandHistory.value.push(cmd)
     if (commandHistory.value.length > 50) {
@@ -72,12 +84,16 @@ export const useTerminalStore = defineStore('terminal', () => {
     commandHistory,
     currentPath,
     themeName,
+    fontFamily,
+    fontSize,
     isProcessing,
     prompt,
     executeCommand,
     pushOutput,
     clearOutput,
     setTheme,
+    setFontFamily,
+    setFontSize,
   }
 })
 
