@@ -3,12 +3,12 @@ import { getChildren } from '@/data/filesystem'
 
 /** Known arguments per command for context-aware completion */
 const commandArgs: Record<string, string[]> = {
-  cat: ['about.md', 'contact.md', 'resume.pdf', 'skills.json'],
-  cd: ['projects', 'experience', '..'],
-  theme: ['matrix', 'amber', 'dracula', 'nord'],
+  cd: ['..'],
+  theme: ['matrix', 'amber', 'dracula', 'nord', 'solarized', 'cyberpunk'],
   kubectl: ['get', 'describe'],
   docker: ['images', 'ps', 'stats'],
   ssh: ['contact'],
+  wget: ['/resume.pdf'],
   man: [], // filled dynamically
 }
 
