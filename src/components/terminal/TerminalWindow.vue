@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
+import { getMobileSuggestions } from '@/composables/useTabComplete'
 import TerminalOutput from './TerminalOutput.vue'
 import TerminalInput from './TerminalInput.vue'
 import CommandChips from './CommandChips.vue'
 import SettingsPanel from './SettingsPanel.vue'
 
 const terminal = useTerminalStore()
-const mobileCommands = ['help', 'ls', 'whoami', 'clear']
 const showSettings = ref(false)
 const terminalInput = ref<InstanceType<typeof TerminalInput> | null>(null)
+
+const chipCommands = computed(() => {
+  const input = terminalInput.value?.currentInput ?? ''
+  return getMobileSuggestions(input, terminal.currentPath)
+})
 
 function handleChipFill(cmd: string) {
   terminalInput.value?.setInput(cmd)
@@ -60,7 +65,7 @@ function toggleSettings() {
       <SettingsPanel v-if="showSettings" />
     </div>
     <TerminalOutput :lines="terminal.outputLines" />
-    <CommandChips :commands="mobileCommands" @fill="handleChipFill" />
+    <CommandChips :commands="chipCommands" @fill="handleChipFill" />
     <TerminalInput ref="terminalInput" />
   </div>
 </template>

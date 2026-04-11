@@ -120,6 +120,57 @@ function buildArgCandidates(command: string, tokens: string[], currentPath: stri
   return known ?? []
 }
 
+/**
+ * Get contextual suggestions for mobile command chips.
+ * Returns full command strings the user can tap to fill.
+ */
+export function getMobileSuggestions(input: string, currentPath: string): string[] {
+  const trimmed = input.trimStart()
+  const max = 6
+
+  // Empty input: show default commands
+  if (!trimmed) {
+    return ['help', 'ls', 'cat about.md', 'whoami', 'clear']
+  }
+
+  const tokens = trimmed.split(/\s+/)
+  const commandNames = getCommandNames()
+
+  // Typing first token: suggest matching command names
+  if (tokens.length === 1) {
+    const partial = (tokens[0] ?? '').toLowerCase()
+    const matches = commandNames
+      .filter((n) => n.startsWith(partial) && n !== partial)
+      .slice(0, max)
+
+    // If exact match, suggest that command's arguments
+    if (commandNames.includes(partial)) {
+      return buildFullSuggestions(partial, [], currentPath).slice(0, max)
+    }
+
+    return matches.length > 0 ? matches : ['help', 'ls', 'clear']
+  }
+
+  // Typing arguments: suggest full commands
+  const command = (tokens[0] ?? '').toLowerCase()
+  const partialArg = (tokens[tokens.length - 1] ?? '').toLowerCase()
+  const prefix = tokens.slice(0, -1).join(' ')
+
+  const candidates = buildArgCandidates(command, tokens, currentPath)
+  const matches = candidates
+    .filter((c) => c.toLowerCase().startsWith(partialArg))
+    .slice(0, max)
+    .map((c) => `${prefix} ${c}`.trim())
+
+  return matches.length > 0 ? matches : [`${command} `]
+}
+
+/** Build full command suggestions for a known command */
+function buildFullSuggestions(command: string, tokens: string[], currentPath: string): string[] {
+  const args = buildArgCandidates(command, [command, ''], currentPath)
+  return args.map((a) => `${command} ${a}`)
+}
+
 function longestCommonPrefix(strings: string[]): string {
   if (strings.length === 0) return ''
   let prefix = strings[0] ?? ''

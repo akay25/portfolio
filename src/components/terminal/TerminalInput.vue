@@ -82,7 +82,7 @@ function setInput(val: string) {
   focusInput()
 }
 
-defineExpose({ focusInput, setInput })
+defineExpose({ focusInput, setInput, currentInput })
 </script>
 
 <template>
