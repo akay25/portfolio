@@ -31,6 +31,9 @@ export const filesystem: FileNode = {
   ],
 }
 
+/** Set of removed file paths (e.g. "about.md", "projects/k8s-cluster-setup.md") — session only */
+export const removedPaths = new Set<string>()
+
 export function getNode(path: string): FileNode | undefined {
   if (path === '~' || path === '') {
     return filesystem
@@ -57,6 +60,64 @@ export function getChildren(path: string): FileNode[] {
 export function isValidDir(path: string): boolean {
   const node = getNode(path)
   return node?.type === 'directory'
+}
+
+export function removeNode(path: string, cwd: string): 'ok' | 'not-found' | 'is-directory' {
+  // Resolve relative to cwd
+  const clean = path.replace(/^\.\//, '').replace(/^~\//, '')
+  const fullPath = clean.includes('/') ? clean : (cwd === '~' ? clean : `${cwd.replace(/^~\/?/, '')}/${clean}`)
+
+  const parts = fullPath.split('/').filter(Boolean)
+  const fileName = parts.pop()
+  if (!fileName) return 'not-found'
+
+  // Find parent
+  let parent = filesystem
+  for (const part of parts) {
+    const child = parent.children?.find((c) => c.name === part && c.type === 'directory')
+    if (!child) return 'not-found'
+    parent = child
+  }
+
+  const idx = parent.children?.findIndex((c) => c.name === fileName)
+  if (idx === undefined || idx === -1) return 'not-found'
+
+  const node = parent.children![idx]!
+  if (node.type === 'directory') return 'is-directory'
+
+  parent.children!.splice(idx, 1)
+  return 'ok'
+}
+
+export function removeDir(path: string, cwd: string): 'ok' | 'not-found' | 'not-empty' {
+  const clean = path.replace(/^\.\//, '').replace(/^~\//, '')
+  const fullPath = clean.includes('/') ? clean : (cwd === '~' ? clean : `${cwd.replace(/^~\/?/, '')}/${clean}`)
+
+  const parts = fullPath.split('/').filter(Boolean)
+  const dirName = parts.pop()
+  if (!dirName) return 'not-found'
+
+  let parent = filesystem
+  for (const part of parts) {
+    const child = parent.children?.find((c) => c.name === part && c.type === 'directory')
+    if (!child) return 'not-found'
+    parent = child
+  }
+
+  const idx = parent.children?.findIndex((c) => c.name === dirName && c.type === 'directory')
+  if (idx === undefined || idx === -1) return 'not-found'
+
+  const node = parent.children![idx]!
+  if (node.children && node.children.length > 0) return 'not-empty'
+
+  parent.children!.splice(idx, 1)
+  return 'ok'
+}
+
+export function nukeAll(): void {
+  if (filesystem.children) {
+    filesystem.children.length = 0
+  }
 }
 
 export function slugify(str: string): string {

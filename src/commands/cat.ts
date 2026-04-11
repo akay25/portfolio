@@ -4,7 +4,7 @@ import { contact } from '@/data/contact'
 import { skills } from '@/data/skills'
 import { projects } from '@/data/projects'
 import { experience } from '@/data/experience'
-import { slugify } from '@/data/filesystem'
+import { slugify, removedPaths } from '@/data/filesystem'
 import type { CommandHandler, OutputLine, Project, Experience } from '@/types'
 
 const handler: CommandHandler = (args, context) => {
@@ -27,6 +27,13 @@ function resolveFile(filename: string, cwd: string): { lines: OutputLine[] } {
 
   // Check if it's a full path like projects/k8s-cluster-setup.md
   const fullPath = clean.includes('/') ? clean : resolveToCwd(clean, cwd)
+
+  // Check if file was removed this session
+  if (removedPaths.has('*') || removedPaths.has(fullPath)) {
+    return {
+      lines: [{ text: `cat: ${filename}: No such file or directory`, type: 'error' }],
+    }
+  }
 
   // Root-level files
   switch (fullPath) {
