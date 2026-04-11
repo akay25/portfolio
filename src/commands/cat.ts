@@ -1,6 +1,7 @@
 import { registerCommand } from './registry'
 import { about } from '@/data/about'
 import { contact } from '@/data/contact'
+import { skills } from '@/data/skills'
 import type { CommandHandler, OutputLine } from '@/types'
 
 const handler: CommandHandler = (args) => {
@@ -17,6 +18,10 @@ const handler: CommandHandler = (args) => {
       return formatAbout()
     case 'contact.md':
       return formatContact()
+    case 'skills.json':
+      return formatSkillsRaw()
+    case 'resume.pdf':
+      return openResume()
     default:
       return {
         lines: [
@@ -66,6 +71,25 @@ function formatContact(): { lines: OutputLine[] } {
   }
 
   return { lines }
+}
+
+function formatSkillsRaw(): { lines: OutputLine[] } {
+  const json = JSON.stringify(skills)
+  return {
+    lines: [{ text: json, type: 'default' }],
+  }
+}
+
+function openResume(): { lines: OutputLine[] } {
+  window.open('/resume.pdf', '_blank')
+  return {
+    lines: [
+      { text: '# resume.pdf', type: 'heading' },
+      { text: '', type: 'default' },
+      { text: 'Opening resume in a new tab...', type: 'success' },
+      { text: 'To download, run: wget /resume.pdf', type: 'info' },
+    ],
+  }
 }
 
 registerCommand({

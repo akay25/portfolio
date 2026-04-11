@@ -96,7 +96,7 @@ export const fontFamilies = [
   { name: 'consolas', label: 'Consolas', value: "'Consolas', monospace" },
 ]
 
-export const fontSizes = [10, 12, 13, 14, 15, 16, 18, 20]
+export const fontSizes = [14, 16, 18, 20]
 
 export function getTheme(name: string): Theme | undefined {
   return themes.find((t) => t.name === name)

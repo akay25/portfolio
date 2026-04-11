@@ -17,6 +17,50 @@ watch(
     }
   },
 )
+
+// Regex to match URLs and email addresses
+const linkPattern = /(https?:\/\/[^\s<>]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g
+
+interface TextSegment {
+  text: string
+  href?: string
+}
+
+function parseSegments(text: string): TextSegment[] {
+  const segments: TextSegment[] = []
+  let lastIndex = 0
+
+  for (const match of text.matchAll(linkPattern)) {
+    const matchText = match[0] ?? ''
+    const index = match.index ?? 0
+
+    // Text before the match
+    if (index > lastIndex) {
+      segments.push({ text: text.slice(lastIndex, index) })
+    }
+
+    // The link itself
+    const isEmail = !matchText.startsWith('http')
+    segments.push({
+      text: matchText,
+      href: isEmail ? `mailto:${matchText}` : matchText,
+    })
+
+    lastIndex = index + matchText.length
+  }
+
+  // Remaining text
+  if (lastIndex < text.length) {
+    segments.push({ text: text.slice(lastIndex) })
+  }
+
+  return segments.length > 0 ? segments : [{ text }]
+}
+
+function hasLinks(text: string): boolean {
+  linkPattern.lastIndex = 0
+  return linkPattern.test(text)
+}
 </script>
 
 <template>
@@ -35,6 +79,18 @@ watch(
       :aria-label="line.ariaLabel"
     >
       <pre v-if="line.type === 'heading' || line.text.includes('\n')">{{ line.text }}</pre>
+      <span v-else-if="hasLinks(line.text)">
+        <template v-for="(seg, si) in parseSegments(line.text)" :key="si">
+          <a
+            v-if="seg.href"
+            :href="seg.href"
+            class="terminal-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >{{ seg.text }}</a>
+          <span v-else>{{ seg.text }}</span>
+        </template>
+      </span>
       <span v-else>{{ line.text }}</span>
     </div>
   </div>
@@ -63,24 +119,21 @@ watch(
   white-space: pre;
 }
 
-.line-default {
-  color: var(--terminal-fg);
-}
-.line-error {
-  color: var(--terminal-error);
-}
-.line-success {
-  color: var(--terminal-success);
-}
-.line-info {
+.line-default { color: var(--terminal-fg); }
+.line-error { color: var(--terminal-error); }
+.line-success { color: var(--terminal-success); }
+.line-info { color: var(--terminal-info); }
+.line-heading { color: var(--terminal-heading); font-weight: bold; }
+.line-table { color: var(--terminal-fg); font-family: var(--terminal-font); }
+
+.terminal-link {
   color: var(--terminal-info);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
 }
-.line-heading {
+
+.terminal-link:hover {
   color: var(--terminal-heading);
-  font-weight: bold;
-}
-.line-table {
-  color: var(--terminal-fg);
-  font-family: var(--terminal-font);
 }
 </style>
