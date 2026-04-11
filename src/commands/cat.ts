@@ -46,7 +46,7 @@ function resolveFile(filename: string, cwd: string): { lines: OutputLine[] } {
   // Projects directory
   if (fullPath.startsWith('projects/')) {
     const slug = fullPath.replace('projects/', '').replace(/\.md$/, '')
-    const project = projects.find((p) => p.name === slug)
+    const project = projects.find((p) => slugify(p.name) === slug)
     if (project) return formatProject(project)
   }
 

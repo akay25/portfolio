@@ -16,7 +16,7 @@ export const filesystem: FileNode = {
       name: 'projects',
       type: 'directory',
       children: projects.map((p) => ({
-        name: `${p.name}.md`,
+        name: `${slugify(p.name)}.md`,
         type: 'file' as const,
       })),
     },

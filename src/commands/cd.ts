@@ -10,45 +10,35 @@ const handler: CommandHandler = (args, context) => {
     return { lines: [], updatePath: '~' }
   }
 
-  // cd .. → go up one level
-  if (target === '..') {
-    if (context.currentPath === '~') {
-      return { lines: [{ text: 'Already at home directory', type: 'info' }] }
-    }
-    const parts = context.currentPath.split('/')
-    parts.pop()
-    const newPath = parts.length <= 1 ? '~' : parts.join('/')
-    return { lines: [], updatePath: newPath }
-  }
-
-  // cd ../.. or ../../ → go up multiple levels
-  if (target.startsWith('..')) {
-    const ups = target.split('/').filter((s) => s === '..').length
-    const parts = context.currentPath.split('/')
-    for (let i = 0; i < ups; i++) {
-      if (parts.length > 1 || (parts.length === 1 && parts[0] !== '~')) {
-        parts.pop()
-      }
-    }
-    const newPath = parts.length === 0 || (parts.length === 1 && parts[0] === '') ? '~' : parts.join('/')
-    return { lines: [], updatePath: newPath }
-  }
-
-  // Resolve absolute (~/projects) or relative (projects) path
-  let resolvedPath: string
-  if (target.startsWith('~/')) {
-    resolvedPath = target
+  // Determine starting segments based on path type
+  let segments: string[]
+  if (target.startsWith('~/') || target === '~') {
+    segments = [] // absolute from home
   } else if (target.startsWith('/')) {
-    resolvedPath = '~' + target
+    segments = [] // absolute from home
   } else {
-    resolvedPath = context.currentPath === '~' ? `~/${target}` : `${context.currentPath}/${target}`
+    // relative: start from cwd
+    segments = context.currentPath === '~' ? [] : context.currentPath.replace(/^~\/?/, '').split('/').filter(Boolean)
   }
 
-  // Strip trailing slash
-  resolvedPath = resolvedPath.replace(/\/+$/, '')
+  // Parse target path segments
+  const targetParts = target.replace(/^~\/?/, '').replace(/^\//, '').split('/').filter(Boolean)
 
-  if (isValidDir(resolvedPath)) {
-    return { lines: [], updatePath: resolvedPath }
+  for (const part of targetParts) {
+    if (part === '..') {
+      if (segments.length > 0) segments.pop()
+      // at home, can't go higher — just stay
+    } else if (part === '.') {
+      continue
+    } else {
+      segments.push(part)
+    }
+  }
+
+  const newPath = segments.length === 0 ? '~' : `~/${segments.join('/')}`
+
+  if (isValidDir(newPath)) {
+    return { lines: [], updatePath: newPath }
   }
 
   return {

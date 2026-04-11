@@ -17,8 +17,39 @@ export function parseInput(raw: string): ParsedInput {
 }
 
 export function parsePipeline(raw: string): ParsedPipeline {
-  const segments = raw.split('|').map((s) => s.trim()).filter(Boolean)
-  return {
-    commands: segments.map(parseInput),
+  const segments: string[] = []
+  let current = ''
+  let inSingle = false
+  let inDouble = false
+
+  for (const ch of raw) {
+    if (ch === "'" && !inDouble) {
+      inSingle = !inSingle
+      current += ch
+    } else if (ch === '"' && !inSingle) {
+      inDouble = !inDouble
+      current += ch
+    } else if (ch === '|' && !inSingle && !inDouble) {
+      segments.push(current.trim())
+      current = ''
+    } else {
+      current += ch
+    }
   }
+  if (current.trim()) segments.push(current.trim())
+
+  return {
+    commands: segments.filter(Boolean).map(parseInput),
+  }
+}
+
+export function hasPipe(raw: string): boolean {
+  let inSingle = false
+  let inDouble = false
+  for (const ch of raw) {
+    if (ch === "'" && !inDouble) inSingle = !inSingle
+    else if (ch === '"' && !inSingle) inDouble = !inDouble
+    else if (ch === '|' && !inSingle && !inDouble) return true
+  }
+  return false
 }

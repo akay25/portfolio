@@ -1,5 +1,5 @@
 import type { CommandDefinition, CommandOutput, TerminalContext } from '@/types'
-import { parseInput, parsePipeline } from './parser'
+import { parseInput, parsePipeline, hasPipe } from './parser'
 
 const commands = new Map<string, CommandDefinition>()
 
@@ -9,7 +9,7 @@ export function registerCommand(def: CommandDefinition): void {
 
 export function executeCommand(input: string, context: TerminalContext): CommandOutput {
   // Check for pipes
-  if (input.includes('|')) {
+  if (hasPipe(input)) {
     return executePipeline(input, context)
   }
 
