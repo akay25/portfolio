@@ -1,4 +1,4 @@
-export const about = `Hi, I'm Ajay — a DevOps Engineer who loves building reliable infrastructure
+export const about = `Hi, I'm Ajay — DevOps guy who loves building reliable infrastructure
 and automating everything that can be automated.
 
 I specialize in cloud infrastructure, container orchestration, CI/CD pipelines,

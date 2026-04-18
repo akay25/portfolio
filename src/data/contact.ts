@@ -4,5 +4,5 @@ export const contact: Contact = {
   email: 'ajay@shivy.co.in',
   github: 'https://github.com/akay25',
   linkedin: 'https://in.linkedin.com/in/akay25',
-  website: 'https://ajay.dev',
+  website: 'https://akay25.github.io/#/',
 }
