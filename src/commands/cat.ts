@@ -25,7 +25,7 @@ function resolveFile(filename: string, cwd: string): { lines: OutputLine[] } {
   // Normalize: strip leading ./ and ~/
   const clean = filename.replace(/^\.\//, '').replace(/^~\//, '')
 
-  // Check if it's a full path like projects/k8s-cluster-setup.md
+  // Check if it's a full path like projects/infisical-operator.md
   const fullPath = clean.includes('/') ? clean : resolveToCwd(clean, cwd)
 
   // Check if file was removed this session

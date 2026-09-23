@@ -31,7 +31,7 @@ export const filesystem: FileNode = {
   ],
 }
 
-/** Set of removed file paths (e.g. "about.md", "projects/k8s-cluster-setup.md") — session only */
+/** Set of removed file paths (e.g. "about.md", "projects/infisical-operator.md") — session only */
 export const removedPaths = new Set<string>()
 
 export function getNode(path: string): FileNode | undefined {
